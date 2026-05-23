@@ -88,12 +88,16 @@ exports.uploadFile = async (req, res) => {
             },
           });
         } catch (err) {
-          fs.unlinkSync(filePath);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
           res.status(500).json({ error: err.message });
         }
       })
       .on('error', (err) => {
-        fs.unlinkSync(filePath);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
         res.status(500).json({ error: err.message });
       });
   } catch (err) {

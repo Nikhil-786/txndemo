@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +24,12 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again after 15 minutes'
 });
 app.use('/api/', limiter);
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 // Database Connection
 const dbURI = process.env.MONGODB_URI;
