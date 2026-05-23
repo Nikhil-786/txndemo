@@ -24,7 +24,13 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/txndemo', {
+const dbURI = process.env.MONGODB_URI;
+if (!dbURI && process.env.NODE_ENV === 'production') {
+  console.error('FATAL ERROR: MONGODB_URI is not defined.');
+  process.exit(1);
+}
+
+mongoose.connect(dbURI || 'mongodb://localhost:27017/txndemo', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

@@ -2,6 +2,12 @@ const Transaction = require('../models/Transaction');
 const fs = require('fs');
 const csv = require('csv-parser');
 
+// Helper to clean currency strings (removes symbols, commas, and handles non-numeric values)
+const parseCurrency = (value) => {
+  if (!value) return 0;
+  return parseFloat(value.toString().replace(/[^0-9.-]+/g, "")) || 0;
+};
+
 // Upload and process CSV file
 exports.uploadFile = async (req, res) => {
   try {
@@ -27,13 +33,13 @@ exports.uploadFile = async (req, res) => {
           clientEmail: row['Client Email'],
           clientPhone: row['Client Phone'],
           clientVPA: row['Client VPA'],
-          amount: parseFloat(row['Amount (₹)']) || 0,
-          gst: parseFloat(row['GST (₹)']) || 0,
-          tds: parseFloat(row['TDS (₹)']) || 0,
-          totalAmount: parseFloat(row['Total Amount (₹)']) || 0,
-          netAmount: parseFloat(row['Net Amount (₹)']) || 0,
-          settlementAmount: parseFloat(row['Settlement Amount (₹)']) || 0,
-          settledAmount: parseFloat(row['Settled Amount (₹)']) || 0,
+          amount: parseCurrency(row['Amount (₹)']),
+          gst: parseCurrency(row['GST (₹)']),
+          tds: parseCurrency(row['TDS (₹)']),
+          totalAmount: parseCurrency(row['Total Amount (₹)']),
+          netAmount: parseCurrency(row['Net Amount (₹)']),
+          settlementAmount: parseCurrency(row['Settlement Amount (₹)']),
+          settledAmount: parseCurrency(row['Settled Amount (₹)']),
           initiatedAt: row['Initiated At'],
           completedAt: row['Completed At'],
           settled: row['Settled'] === 'Yes',

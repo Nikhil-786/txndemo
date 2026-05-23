@@ -8,7 +8,11 @@ const auth = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET || 'your_jwt_secret_key_here');
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      return res.status(500).json({ error: 'Internal Server Error: Security token not configured' });
+    }
+    const decoded = jwt.verify(token.replace('Bearer ', ''), secret);
     req.userId = decoded.userId;
     next();
   } catch (err) {
